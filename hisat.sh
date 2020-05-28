@@ -5,7 +5,7 @@
 #     -s  for single-end reads
 
 # Hisat2 common options
-HISAT="-x $(pwd)/genome/pombe -k 30 --no-spliced-alignment "
+HISAT="-x $(pwd)/genome/pombe -k 30  --no-spliced-alignment "
 
 # Define project (current) diirectory
 SAMPLEDIR=$(pwd)
@@ -57,19 +57,21 @@ echo "...mapping with HISAT2..."
 if [ $single -eq 1 ];
 then 
     for SAMPLE in $(ls $SAMPLEDIR); do
-        hisat2-align-s $HISAT -U  $SAMPLEDIR/$SAMPLE  --summary-file $OUTDIR/$SAMPLE.txt  -S $OUTDIR/$SAMPLE.sam
+        hisat2-align-s $HISAT -U  $SAMPLEDIR/$SAMPLE  --summary-file $OUTDIR/$SAMPLE.txt | tee >(samtools flagstat - > $OUTDIR/$SAMPLE.flagstat) | samtools sort -O BAM | tee $OUTDIR/$SAMPLE.bam | samtools index - $OUTDIR/$SAMPLE.bam.bai
     done
 else
     for SAMPLE in $(ls $SAMPLEDIR | cut -d "_" -f1); do
-        hisat2-align-s $HISAT -1 $SAMPLEDIR/$SAMPLE*1* -2 $SAMPLEDIR/$SAMPLE*2* --summary-file $OUTDIR/$SAMPLE.txt -S $OUTDIR/$SAMPLE.sam
+        hisat2-align-s $HISAT -1 $SAMPLEDIR/$SAMPLE*1* -2 $SAMPLEDIR/$SAMPLE*2* --summary-file $OUTDIR/$SAMPLE.txt | tee >(samtools flagstat - > $OUTDIR/$SAMPLE.flagstat) | samtools sort -O BAM | tee $OUTDIR/$SAMPLE.bam | samtools index - $OUTDIR/$SAMPLE.bam.bai
     done
 fi
 echo "Done."
 
 
 # Merge output statistics
+#
+echo "...prepearing output statistics..."
 for stats in $(ls $OUTDIR/*txt); do
-    echo Filename : "$stats" ; echo ; cat "$stats" ;
+    echo Filename : "$stats" ; echo ; cat "$stats" ; echo ;
 done > $OUTDIR/output_statistics
 
 rm $OUTDIR/*txt
