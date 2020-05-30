@@ -70,8 +70,25 @@ echo "Done."
 # Merge output statistics
 #
 echo "...prepearing output statistics..."
-for stats in $(ls $OUTDIR/*txt); do
+for stats in $(ls $OUTDIR/*.txt); do
     echo Filename : "$stats" ; echo ; cat "$stats" ; echo ;
-done > $OUTDIR/output_statistics
+done > $OUTDIR/hisat_alignment_statistics
 
-rm $OUTDIR/*txt
+rm $OUTDIR/*.txt
+
+# Merge output flagstats
+#
+echo "...prepearing output flagstats..."
+for stats in $(ls $OUTDIR/*.flagstat); do
+    echo Filename : "$stats" ; echo ; cat "$stats" ; echo ;
+done > $OUTDIR/samtools_flagstats
+
+rm $OUTDIR/*.flagstat
+
+# QC
+#
+echo "...start QC of BAMs..."
+fastqc $OUTDIR/*bam
+multiqc $OUTDIR
+mv $OUTDIR/*fastqc* $OUTDIR/multiqc_data/
+echo "Done."
