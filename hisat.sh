@@ -89,6 +89,6 @@ rm $OUTDIR/*.flagstat
 #
 echo "...start QC of BAMs..."
 fastqc $OUTDIR/*bam
-multiqc $OUTDIR
+multiqc $OUTDIR -o $OUTDIR
 mv $OUTDIR/*fastqc* $OUTDIR/multiqc_data/
 echo "Done."

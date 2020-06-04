@@ -19,8 +19,8 @@ mkdir -p $FORWARD
 SAMPLEDIR="$(pwd)/$1"
 
 for BAM in $(ls $SAMPLEDIR | grep -v '.bai' | grep '.bam'); do
-        bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --minMappingQuality 60 --centerReads -b $SAMPLEDIR/$BAM  -o $RMDUP/$BAM.bw
+        bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --minMappingQuality 60 --centerReads -b $SAMPLEDIR/$BAM  -o $RMDUP/$BAM.rmdup.bw
         bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --centerReads -b $SAMPLEDIR/$BAM  -o $DUPLICATE/$BAM.bw
-        bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --minMappingQuality 60 --samFlagInclude 16 --centerReads -b $SAMPLEDIR/$BAM  -o $REVERSE/$BAM.bw
-        bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --minMappingQuality 60 --samFlagExclude 16 --centerReads -b $SAMPLEDIR/$BAM  -o $FORWARD/$BAM.bw
+        bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --minMappingQuality 60 --samFlagInclude 16  -b $SAMPLEDIR/$BAM  -o $REVERSE/$BAM.rev.bw
+        bamCoverage --binSize 1 --effectiveGenomeSize 12631379 --minMappingQuality 60 --samFlagExclude 16  -b $SAMPLEDIR/$BAM  -o $FORWARD/$BAM.fwd.bw
 done
